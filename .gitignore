@@ -1,0 +1,9 @@
+.env
+config.json
+jobs/*.txt
+jobs/STATUS.md
+!jobs/*.example.txt
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

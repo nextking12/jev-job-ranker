@@ -1,0 +1,40 @@
+Alex Chen (FICTIONAL EXAMPLE — replace with your own)
+Backend / Platform Engineer | 8 years | Portland, OR
+alex.chen@example.com | github.com/alexchen-example
+
+Summary:
+Backend and platform engineer building internal developer tooling and customer-
+facing APIs. Deep in Python/Go, AWS, Postgres, Kubernetes, CI/CD. Comfortable
+with discovery, technical demos, and rollouts with non-engineering partners.
+Led a 40-engineer platform migration, cut deploy time from 45 to 9 minutes.
+
+Core strengths:
+- Python and Go service design, REST/gRPC APIs, event-driven systems
+- AWS (EKS, RDS, IAM, S3, CloudWatch), Terraform, GitHub Actions
+- Postgres performance tuning, schema design, migrations
+- Kubernetes operations, observability (Prometheus, Grafana, OpenTelemetry)
+- On-call and incident response; wrote the runbooks the team still uses
+- Mentoring junior engineers; technical writing (RFCs, design docs)
+
+Track record:
+- Senior Backend Engineer, Meridian Labs (2022-present): rebuilt the billing
+  API (Python/FastAPI/Postgres); 99.95% SLO; partnered with PM and solutions
+  team on two pilot rollouts
+- Platform Engineer, Northgate Systems (2019-2022): internal CI/CD platform,
+  Terraform modules, EKS upgrades; cut build times 60%
+- Backend Engineer, Helio Software (2016-2019): Go microservices, Kafka
+
+KNOWN GAPS AND LIMITATIONS (be explicit — the ranker reads this section):
+- No people-management experience beyond mentoring one intern
+- No quota-carrying sales experience
+- No security clearance; not interested in defense work
+- No ML/modeling experience; data-pipeline work was operational, not modeling
+- No experience with regulated medical/pharma environments
+
+What Alex wants next:
+- Platform, backend, or SRE roles where discovery, demos, and partner handoff
+  are part of the job (not pure heads-down IC only)
+- Open to adjacent pivots (data platform, SRE, eng management) when 2+ core
+  strengths transfer
+
+Compensation floor: $150k base, or $75/hr x 2080 equivalent.

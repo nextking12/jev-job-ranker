@@ -1,0 +1,24 @@
+<Globex> - <Senior Platform Engineer>
+Location: Portland, OR / Remote (US)
+Source: pasted by user
+Salary: $160k-$210k base
+
+Role:
+Own and evolve an internal developer platform used by ~120 engineers: CI/CD,
+Kubernetes, infrastructure-as-code, and the paved-road templates teams deploy
+from. Partner with product and security on rollout standards.
+
+What You'll Do:
+- Build and maintain Kubernetes-based platform services (GKE/EKS)
+- Own CI/CD pipeline templates and developer documentation
+- Run design reviews, incident retrospectives, and quarterly platform demos
+- Partner with security on supply-chain and IAM standards
+
+Who You Are / Requirements:
+- 5+ years backend or platform engineering experience
+- Strong Kubernetes, Terraform, and at least one of Python/Go
+- Experience with Postgres or similar relational stores
+- Comfort leading cross-team migrations and partner-facing rollouts
+
+Notes:
+- On-call rotation is light (roughly one page per quarter)

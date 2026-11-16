@@ -1,0 +1,82 @@
+{
+  "profile": "jobs/profile.txt",
+  "jobs_dir": "jobs",
+  "status_file": "jobs/STATUS.md",
+  "model": "jev-latest",
+
+  "questions": {
+    "route": {
+      "instructions": "Which track fits the candidate best. Judge from what the role actually does day to day, not from incidental JD keywords",
+      "criteria": {
+        "backend_engineer": "API/service design, distributed systems, databases, reliability",
+        "platform_engineer": "Internal developer platforms, CI/CD, infrastructure as code, Kubernetes",
+        "site_reliability": "SLOs, incident response, observability, on-call for production systems",
+        "data_engineer": "Pipelines, warehousing, Spark/Airflow-style tooling",
+        "engineering_manager": "People management, planning, hiring, delivery accountability",
+        "poor_fit": "Hard blocker or body-shop/quota mismatch"
+      }
+    },
+    "domain":    { "instructions": "Posting needs hands-on backend/platform/distributed-systems work the candidate has done" },
+    "customer_face": { "instructions": "Needs stakeholder-facing discovery, demos, pilots, or cross-team handoff" },
+    "blocker":   { "instructions": "Has hard blocker: required clearance, quota carrying, management-track-only, or language the candidate does not have" },
+    "transferable": { "instructions": "Even without an exact domain match, at least two of the candidate's core strengths (Python/Go, AWS, Postgres, Kubernetes, CI/CD, incident response, mentoring) transfer to this posting" },
+    "stretch_gap":  { "instructions": "The biggest gap is one the candidate could close within about 90 days of hands-on work (preferred-vs-required, learnable tooling, adjacent domain)" }
+  },
+
+  "core_routes": ["backend_engineer", "platform_engineer"],
+  "poor_fit_routes": ["poor_fit"],
+  "route_to_family": {
+    "data_engineer": "data_platform",
+    "site_reliability": "reliability_sre",
+    "engineering_manager": "engineering_management"
+  },
+  "pivot_families": {
+    "data_platform": {
+      "label": "data platform",
+      "keywords": ["pipeline", "airflow", "kafka", "warehouse", "etl", "spark"],
+      "transfer": 0.5
+    },
+    "reliability_sre": {
+      "label": "SRE",
+      "keywords": ["slo", "sli", "on-call", "incident", "observability", "pagerduty"],
+      "transfer": 0.6
+    },
+    "engineering_management": {
+      "label": "eng management",
+      "keywords": ["manage", "hiring", "1:1", "performance review", "team lead"],
+      "transfer": 0.4
+    }
+  },
+  "unknown_stretch_bonus": 0.25,
+  "core_domain_threshold": 0.7,
+  "core_customer_threshold": 0.5,
+  "fit_scale": 3,
+
+  "scoring": {
+    "fit": 0.6,
+    "domain": 0.2,
+    "customer": 0.2,
+    "blocker_penalty": 0.5
+  },
+
+  "route_map": {
+    "globex": "qa_globex_platform",
+    "initech": "qa_initech_backend"
+  },
+
+  "offline": {
+    "domain_keywords": ["postgres", "kubernetes", "aws", "python", "golang", "distributed systems", "api"],
+    "customer_keywords": ["stakeholder", "cross-functional", "demo", "rfc", "design doc", "incident review"],
+    "hard_cert_terms": ["cissp", "security clearance"],
+    "strong_blocker_terms": ["big-4", "utilization", "quota"],
+    "quota_saas_terms": ["saas", "meddpicc", "carried"],
+    "default_route": "backend_engineer",
+    "route_rules": [
+      ["platform engineer", "platform_engineer"],
+      ["site reliability", "site_reliability"],
+      ["sre", "site_reliability"],
+      ["data engineer", "data_engineer"],
+      ["engineering manager", "engineering_manager"]
+    ]
+  }
+}

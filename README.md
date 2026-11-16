@@ -1,97 +1,173 @@
-# Jev Job Ranker (template)
+# Jev Job Ranker
 
-Rank N job postings against one profile using [TypeSafe](https://typesafe.ai)'s
-Jev model — a config-driven template you clone, personalize, and run.
+**A helper that reads job ads and tells you which ones are worth applying to.**
 
-One `jobs/profile.txt` × many `jobs/*.txt` postings → one table with a score,
-a route label, stretch detection, an advisory "hidden demand / likely rejection
-reason" readout, and an APPLY / REVIEW / SKIP action per row.
+You paste in job postings, it scores each one against your resume/background,
+and you get a shortlist: apply, review, or skip. It's not a magic replacement
+for your judgment — it's a shortlist maker so you spend your time on the
+postings that actually fit you.
 
-Built for the "tailoring agent + human decides" loop, and usable stand-alone.
+- **Works two ways:** with an AI model from [TypeSafe](https://typesafe.ai)
+  (better scores, needs a paid API key) or in offline demo mode (rough scores,
+  no account needed).
+- **Private by design:** your resume, postings, and API key stay on your
+  computer. Nothing is uploaded anywhere except the TypeSafe AI service itself.
+- **Made for AI coding agents** (OpenCode, Claude Code, Cursor…) but you can
+  also drive it yourself from a terminal.
 
-## Quickstart
+Built for job seekers, and for career coaches or agents helping them.
+
+## What you'll need
+
+| Thing | Why | Cost |
+|---|---|---|
+| A computer (Mac, Windows, or Linux) | Runs the tool | — |
+| [Python](https://www.python.org/downloads/) 3.10+ (free) | The tool is a Python program | Free |
+| This repository | Download it with the steps below | Free |
+| A [TypeSafe](https://typesafe.ai) account + API key | Powers the AI scoring (optional) | Paid, per use |
+
+An **API key** is like a password that lets a program use a paid AI service.
+You create it in your TypeSafe account and paste it into a local file (`.env`)
+that the tool reads. It never leaves your computer except to talk to TypeSafe.
+
+> Not sure about the technical parts? The easiest path: install an AI coding
+> agent (like OpenCode or Claude Code) and say
+> *"Set up this repo for me and walk me through it."* The repo includes an
+> `AGENTS.md` file written for exactly that.
+
+## Setup, step by step
+
+### 1. Get the code
+
+Open a terminal (on macOS: the Terminal app; on Windows: Command Prompt or
+PowerShell) and run:
 
 ```bash
-git clone <your-fork-or-template-url> jev-job-ranker
+git clone https://github.com/nextking12/jev-job-ranker.git
 cd jev-job-ranker
-python3 --version            # 3.11+ recommended (3.10 works)
+```
 
-cp config.example.json config.json          # edit: questions, routes, families
-cp jobs/profile.example.txt jobs/profile.txt # edit: YOUR profile
-cp jobs/STATUS.example.md jobs/STATUS.md     # optional pipeline tracker
-cp .env.example .env                         # paste your TYPESAFE_API_KEY
+(Don't have `git`? Download the repo as a ZIP from GitHub instead:
+the green **Code** button → **Download ZIP**, then unzip it and open a
+terminal in that folder.)
 
+### 2. Check you have Python
+
+```bash
+python3 --version
+```
+
+You want `3.10` or newer. If you see "command not found", install Python from
+python.org first, then try again.
+
+### 3. Create your three personal files
+
+These are the only files you edit. Copy the examples:
+
+```bash
+cp config.example.json config.json
+cp jobs/profile.example.txt jobs/profile.txt
+cp jobs/STATUS.example.md jobs/STATUS.md   # optional: tracks your applications
+```
+
+- **`config.json`** — tells the tool what kinds of roles you're looking for,
+  what counts as a dealbreaker (clearance required, quota carrying, etc.),
+  and how to weigh things. The example works out of the box for a software
+  engineer; edit the parts that describe *your* situation.
+- **`jobs/profile.txt`** — your background, in plain text. Replace the
+  fictional "Job Seeker" example with your own experience. **Important:**
+  include a section called `KNOWN GAPS AND LIMITATIONS` and list what you
+  *don't* have or can't do. The AI reads stated gaps far better than silence —
+  an honest list makes the scores much more accurate. (No phone number —
+  location, email, and public links only.)
+- **`jobs/STATUS.md`** — a simple table tracking which postings you've
+  applied to, been rejected from, or are holding. The tool reads it so it
+  stops recommending jobs you've already dealt with.
+
+### 4. (Optional but recommended) Connect the AI
+
+1. Create an account at [typesafe.ai](https://typesafe.ai) and get an API key.
+2. ```bash
+   cp .env.example .env
+   ```
+3. Open `.env` in any text editor and paste your key after `TYPESAFE_API_KEY=`.
+
+Then:
+
+```bash
 pip install typesafe-sdk
-# or, no key yet / offline: skip the SDK — the mirrored keyword heuristic runs
-
-python ranker.py             # add --config path/to/config.json if elsewhere
 ```
 
-Add postings as `jobs/<company>_<role>.txt` (snake_case; see
-`examples/sample_posting.txt`), then re-run.
+If you skip this step entirely, the tool runs in **offline mode**: a simpler
+keyword-based estimate with the same table output. Good for a first look; the
+AI version is noticeably smarter.
 
-## How it works
+### 5. Add postings and run
 
-Live mode asks Jev one combined question set per posting (route, fit score,
-domain match, customer-facing demand, hard-blocker presence, transferable
-skills, stretch-gap, plus two advisory questions). The composite is:
+Save each job ad as a plain text file in `jobs/`, named
+`<company>_<role>.txt`, e.g. `jobs/acme_backend_engineer.txt`
+(see `examples/sample_posting.txt` for the format).
 
+Then:
+
+```bash
+python ranker.py
 ```
-score = fit/scale*0.6 + domain*0.2 + customer*0.2 - blocker*0.5 + stretch_adj
-stretch_adj = transfer * family_bonus * (1 - 0.5*gap)   # core fits get 0
-```
 
-Action mapping: `>=0.6 & conf>=0.6` APPLY · `0.4–0.6` REVIEW · `<0.4 & conf>=0.85`
-SKIP · otherwise `STRETCH?`. Rows already in `jobs/STATUS.md` are labeled CLOSED
-or AWAITING and sorted below actionable ones.
+### What the table means, column by column
 
-The two advisory questions (hidden demand, likely rejection reason) are printed
-under the table and **never enter the score**. Treat the APPLY-vs-STRETCH? edge
-as noise; the score carries more information than the label.
-
-## Config reference (`config.json`)
-
-| Key | Purpose |
+| Column | Plain meaning |
 |---|---|
-| `profile`, `jobs_dir`, `status_file` | Paths (relative to config file) |
-| `model` | Jev model id, e.g. `jev-latest` |
-| `questions.route.criteria` | The routes Jev can pick; you define the vocabulary |
-| `questions.{domain,customer_face,blocker,transferable,stretch_gap}` | Noul question instructions |
-| `core_routes` / `poor_fit_routes` | Routes classed as core fit / automatic poor fit |
-| `route_to_family` + `pivot_families` | Map route → stretch family; families carry `keywords` + `transfer` bonus |
-| `unknown_stretch_bonus`, `core_domain_threshold`, `core_customer_threshold`, `fit_scale` | Classifier tuning |
-| `scoring.{fit,domain,customer,blocker_penalty}` | Composite weights |
-| `route_map` | Optional `{filename_substring: resume_folder}` shown as a column |
-| `offline.*` | Keywords for the no-API mirror |
-| `advisory.{reject_note,unstated_note}` | Override the printed advisory explanations |
+| posting | Which job ad this row is |
+| score | Overall fit, 0–1. Higher is better. Roughly: 0.6+ = apply-worthy |
+| fit | How strong the match is at a glance (0–3) |
+| dom | Does the role need your hands-on skills? (0–1) |
+| cus | Does it need customer-facing work (discovery, demos, handoff)? (0–1) |
+| blk | Dealbreaker presence — clearance, quota, etc. Lower is better |
+| xfer | Do at least 2 of your strengths transfer? (0–1) |
+| conf | How confident the AI is in its fit score (0–1) |
+| status | From your STATUS.md: new / applied / denied / … |
+| route | Which track the AI thinks fits (you define these in config.json) |
+| action | **APPLY** (apply), **REVIEW** (read it and decide), **SKIP** (don't bother), **STRETCH?** (maybe — your call), plus **AWAITING** / **CLOSED** if you already dealt with it |
 
-Everything candidate-specific lives here. The code is mechanics only.
+Two advisory notes print under the table (hidden demand, likely rejection
+reason). They're **not** part of the score — they're context to help your
+judgment, e.g. "this posting implies travel but never says how much."
 
-## Your profile format
+**Rule of thumb:** trust the score more than the label; near-boundary labels
+(APPLY vs STRETCH?) are coin flips.
 
-Include an explicit `KNOWN GAPS AND LIMITATIONS` section. Jev reads stated
-negatives; silence gets inferred. See `jobs/profile.example.txt`.
+## Advanced: customizing (`config.json`)
 
-## Offline mode
+You don't need this to get started. When you do:
 
-No `TYPESAFE_API_KEY` or no SDK → keyword-mirror heuristic with the same output
-shape. Useful for demos and CI; scores are rougher than live Jev.
-
-## Privacy
-
-`.gitignore` excludes `.env`, your real `config.json`, `jobs/profile.txt`,
-`jobs/STATUS.md`, and real postings. The repo ships only examples with a
-**fictional** persona (Job Seeker). Don't commit your pipeline. Your
-`TYPESAFE_API_KEY` is a credential — Jev calls are billed to your account.
+| Key | What it controls |
+|---|---|
+| `questions.route.criteria` | The role tracks the AI can pick from, in your words |
+| `questions.{domain,customer_face,blocker,transferable,stretch_gap}` | What the AI is asked about |
+| `core_routes` / `poor_fit_routes` | Tracks that count as core fit / automatic mismatch |
+| `route_to_family` + `pivot_families` | Adjacent role families you'd consider, with a `transfer` bonus |
+| `scoring.*` | How each factor weighs into the score |
+| `offline.*` | Keywords used in offline mode |
+| `advisory.*` | The explanatory notes printed under the table |
 
 ## FAQ
 
-- **Do others need their own API key?** Yes. The SDK is MIT; the hosted Jev API
-  is TypeSafe's commercial service.
-- **Can I change the model?** Yes, `model` in config.
-- **Is this affiliated with TypeSafe or Anthropic?** No. Independent template.
-- **Python version?** 3.10+ (stdlib `tomllib` not required; config is JSON).
+**Do I need to know how to code?** No. Most people can copy the fictional
+example files, fill them in, and run the commands. An AI agent makes it even
+easier.
 
-## License
+**How much does the AI cost?** TypeSafe bills per use; a typical run over a
+dozen postings is a handful of AI calls. See typesafe.ai for pricing.
+Offline mode is free.
 
-MIT. See `LICENSE`.
+**Is my data private?** Your files stay local. Your profile and job postings
+are sent to TypeSafe's AI to generate scores — read their privacy terms if
+that matters to you. Never commit `.env` (your API key) or your real profile
+to a shared copy of this repo.
+
+**Can I change the model?** Yes — `model` in `config.json`.
+
+**Is this affiliated with TypeSafe or Anthropic?** No. Independent project.
+
+**License?** MIT — do what you like, no warranty. See `LICENSE`.

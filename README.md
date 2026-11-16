@@ -81,7 +81,7 @@ shape. Useful for demos and CI; scores are rougher than live Jev.
 
 `.gitignore` excludes `.env`, your real `config.json`, `jobs/profile.txt`,
 `jobs/STATUS.md`, and real postings. The repo ships only examples with a
-**fictional** persona (Alex Chen). Don't commit your pipeline. Your
+**fictional** persona (Job Seeker). Don't commit your pipeline. Your
 `TYPESAFE_API_KEY` is a credential — Jev calls are billed to your account.
 
 ## FAQ
